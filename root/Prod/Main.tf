@@ -1,0 +1,14 @@
+module "rgs" {
+    source = "../../child/RG_Module"
+    rgs = var.rgs
+  
+}
+
+
+
+module "aks_module" {
+    source = "../../child/AKS_Module"
+    aks_rs = var.aks_rs
+    depends_on = [ module.rgs ]
+  
+}
