@@ -4,4 +4,4 @@ resource "azurerm_resource_group" "rgs" {
   location = each.value.rg_location
 }
 
-#my nam is nitesh kushwaha
+#my nam is nitesh kushwaha .I am from farrukhabad
