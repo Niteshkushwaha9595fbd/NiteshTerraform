@@ -15,3 +15,9 @@ aks_rs = {
 
   
 }
+log_analytic = {
+  workspace1 = {
+    l_name = "loganalytics-ws-1"
+  }
+  
+}

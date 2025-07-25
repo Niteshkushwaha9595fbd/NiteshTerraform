@@ -4,7 +4,3 @@ resource "azurerm_resource_group" "rgs" {
   location = each.value.rg_location
 }
 
-#i am from farrukhabd.check 
-#gggg
-#yyyyyy
-#tttttt

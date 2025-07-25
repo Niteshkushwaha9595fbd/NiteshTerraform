@@ -13,7 +13,9 @@ variable "aks_rs" {
   }))
 }
 
-# variable "rg_name" {
-#   description = "Name of the existing resource group"
-#   type        = string
-# }
+variable "log_analytic" {
+  description = "Map of Log Analytics workspaces with their names and other optional settings"
+  type = map(object({
+    l_name = string
+  }))
+}
