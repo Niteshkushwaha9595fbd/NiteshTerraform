@@ -3,3 +3,5 @@ resource "azurerm_resource_group" "rgs" {
   name     = each.value.rg_name
   location = each.value.rg_location
 }
+
+#my nam is nitesh kushwaha
