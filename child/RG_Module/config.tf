@@ -4,4 +4,8 @@ resource "azurerm_resource_group" "rgs" {
   location = each.value.rg_location
 }
 
-#main farrukhabad ke sahar me rahta hu
+resource "azurerm_resource_group" "rgs" {
+    for_each = var.rgs
+  name     = each.value.rg_name
+  location = each.value.rg_location
+}
