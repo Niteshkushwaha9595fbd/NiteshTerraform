@@ -8,7 +8,7 @@ on:
 jobs:
   terraformInit:
     name: Terraform Ititwa
-    runs-on: nt
+    runs-on: nitesh
     steps: 
     - name: Dhondhu Maharaj
       run: echo Dhondhu Maharaaj
