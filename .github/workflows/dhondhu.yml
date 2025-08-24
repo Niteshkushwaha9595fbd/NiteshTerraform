@@ -1,0 +1,16 @@
+name: "DHondhu Maharaaj"
+on:
+  push:
+    branches:
+      - 'features/**'
+      - 'main'
+      - 'hotfix/**'
+jobs:
+  terraformInit:
+    name: Terraform Ititwa
+    runs-on: nt
+    steps: 
+    - name: Dhondhu Maharaj
+      run: echo Dhondhu Maharaaj
+      
+    
