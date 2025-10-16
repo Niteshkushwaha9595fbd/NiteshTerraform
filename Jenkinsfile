@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         TF_VERSION = "1.5.0"
-        TF_WORKING_DIR = "C:\\Terraform\\Prod"  // Windows path (double backslashes)
+        TF_WORKING_DIR = "C:\\Terraform\\root\\Prod"  // Windows path (double backslashes)
         TF_ZIP = "terraform_${TF_VERSION}_windows_amd64.zip"
     }
 
