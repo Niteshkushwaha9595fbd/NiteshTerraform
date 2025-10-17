@@ -10,7 +10,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git 'https://your-git-repo-url.git' // Replace with your repo URL
+                git 'https://github.com/Niteshkushwaha9595fbd/NiteshTerraform.git' // Replace with your repo URL
             }
         }
 
