@@ -1,7 +1,5 @@
 pipeline {
-     agent {
-        label 'nitesh23'
-    }
+     agent any
 
     environment {
         TF_VERSION = '1.6.0' // Optional, agar install karna ho
