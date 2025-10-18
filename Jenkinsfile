@@ -19,7 +19,7 @@ pipeline {
                         echo "Terraform not found, installing..."
                         curl -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
                         unzip terraform.zip
-                        sudo mv terraform /usr/local/bin/
+                        mv terraform /usr/local/bin/
                     fi
                     terraform -version
                 '''
