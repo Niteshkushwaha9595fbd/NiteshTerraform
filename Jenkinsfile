@@ -1,31 +1,25 @@
 pipeline {
-    agent any
+     agent any
 
     environment {
-        TF_VERSION = '1.6.0'
-        TF_BIN_DIR = "${WORKSPACE}/bin"
-        PATH = "${TF_BIN_DIR}:${env.PATH}"
+        TF_VERSION = '1.6.0' // Optional, agar install karna ho
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: 'https://github.com/Niteshkushwaha9595fbd/NiteshTerraform.git'
+                git branch: 'main' , url: 'https://github.com/Niteshkushwaha9595fbd/NiteshTerraform.git' // Replace with your repo URL
             }
         }
 
         stage('Install Terraform (if not installed)') {
             steps {
                 sh '''
-                    mkdir -p $TF_BIN_DIR
                     if ! command -v terraform &> /dev/null; then
                         echo "Terraform not found, installing..."
                         curl -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
                         unzip -o terraform.zip
-                        mv terraform $TF_BIN_DIR/
-                        chmod +x $TF_BIN_DIR/terraform
-                    else
-                        echo "Terraform already installed"
+                        mv terraform /usr/local/bin/
                     fi
                     terraform -version
                 '''
@@ -78,3 +72,10 @@ pipeline {
                         "ARM_TENANT_ID=${TENANT_ID}",
                         "ARM_SUBSCRIPTION_ID=${SUBSCRIPTION_ID}"
                     ]) {
+                        sh 'terraform plan'
+                    }
+                }
+            }
+        }
+    }
+}
