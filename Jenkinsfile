@@ -1,4 +1,4 @@
-pipeline { 
+pipeline {
     agent { label 'nitesh23' }
 
     environment {
@@ -29,14 +29,11 @@ pipeline {
 
         stage('Terraform Format Check') {
             steps {
-                // ❌ Previous line caused error: pipeline failed if files not formatted
-                // ❗ Fix: We now ignore the non-zero exit code and just show warning if needed
+                // ⚠️ Warn but don't fail build on formatting issues
                 script {
                     def fmtStatus = bat(returnStatus: true, script: 'terraform.exe fmt -check -recursive')
                     if (fmtStatus != 0) {
                         echo '⚠️ Warning: Some Terraform files are not properly formatted. Please run `terraform fmt` locally.'
-                        // Optionally: mark build unstable
-                        // currentBuild.result = 'UNSTABLE'
                     }
                 }
             }
@@ -51,12 +48,12 @@ pipeline {
                     string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
                 ]) {
                     withEnv([
-                        "ARM_CLIENT_ID=${env.CLIENT_ID}",
-                        "ARM_CLIENT_SECRET=${env.CLIENT_SECRET}",
-                        "ARM_TENANT_ID=${env.TENANT_ID}",
-                        "ARM_SUBSCRIPTION_ID=${env.SUBSCRIPTION_ID}"
+                        // ✅ FIXED: Use shell variable style ($VAR), NOT env.VAR
+                        "ARM_CLIENT_ID=$CLIENT_ID",
+                        "ARM_CLIENT_SECRET=$CLIENT_SECRET",
+                        "ARM_TENANT_ID=$TENANT_ID",
+                        "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
                     ]) {
-                        // ✅ terraform init
                         bat 'terraform.exe init'
                     }
                 }
@@ -65,7 +62,6 @@ pipeline {
 
         stage('Terraform Validate') {
             steps {
-                // ✅ terraform validate
                 bat 'terraform.exe validate'
             }
         }
@@ -79,12 +75,12 @@ pipeline {
                     string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
                 ]) {
                     withEnv([
-                        "ARM_CLIENT_ID=${env.CLIENT_ID}",
-                        "ARM_CLIENT_SECRET=${env.CLIENT_SECRET}",
-                        "ARM_TENANT_ID=${env.TENANT_ID}",
-                        "ARM_SUBSCRIPTION_ID=${env.SUBSCRIPTION_ID}"
+                        // ✅ FIXED again here
+                        "ARM_CLIENT_ID=$CLIENT_ID",
+                        "ARM_CLIENT_SECRET=$CLIENT_SECRET",
+                        "ARM_TENANT_ID=$TENANT_ID",
+                        "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
                     ]) {
-                        // ✅ terraform plan
                         bat 'terraform.exe plan'
                     }
                 }
