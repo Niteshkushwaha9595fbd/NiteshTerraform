@@ -3,6 +3,8 @@ pipeline {
 
     environment {
         TF_VERSION = '1.6.0'
+        TF_PLAN_FILE = 'tfplan.txt'
+        EMAIL_TO = 'niteshkushwaha9595fbd@gmail.com'  // 🔁 CHANGE THIS
     }
 
     stages {
@@ -12,7 +14,7 @@ pipeline {
             }
         }
 
-        stage('Install Terraform (if not installed)') {
+        stage('Install Terraform') {
             steps {
                 bat '''
                     IF NOT EXIST terraform.exe (
@@ -31,7 +33,7 @@ pipeline {
                     script {
                         def fmtStatus = bat(returnStatus: true, script: 'terraform.exe fmt -check -recursive')
                         if (fmtStatus != 0) {
-                            echo '⚠️ Warning: Some Terraform files are not properly formatted. Please run `terraform fmt` locally.'
+                            echo '⚠️ Warning: Some Terraform files are not properly formatted.'
                         }
                     }
                 }
@@ -81,17 +83,37 @@ pipeline {
                             "ARM_TENANT_ID=$TENANT_ID",
                             "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
                         ]) {
-                            bat 'terraform.exe plan'
+                            bat "terraform.exe plan > ${env.TF_PLAN_FILE}"
                         }
                     }
                 }
             }
         }
 
+        stage('Manual Validation & Email') {
+            steps {
+                script {
+                    emailext(
+                        subject: "Terraform Plan Approval Needed",
+                        body: """
+                            Hello,
+
+                            Please review the attached Terraform plan for approval.
+
+                            Regards,
+                            DevOps Pipeline
+                        """,
+                        to: "${EMAIL_TO}",
+                        attachmentsPattern: "**/root/Prod/${TF_PLAN_FILE}"
+                    )
+                }
+                input message: 'Do you approve the Terraform changes?', ok: 'Approve'
+            }
+        }
+
         stage('Terraform Apply') {
             steps {
                 dir('root/Prod') {
-                    input message: 'Apply Terraform changes?', ok: 'Apply'
                     withCredentials([
                         usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
                         string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
