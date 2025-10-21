@@ -40,18 +40,18 @@ pipeline {
 
         stage('Terraform Init') {
             steps {
-                withCredentials([
-                    usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
-                    string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
-                    string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
-                ]) {
-                    withEnv([
-                        "ARM_CLIENT_ID=$CLIENT_ID",
-                        "ARM_CLIENT_SECRET=$CLIENT_SECRET",
-                        "ARM_TENANT_ID=$TENANT_ID",
-                        "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
+                dir('root/Prod') {
+                    withCredentials([
+                        usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
+                        string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
+                        string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
                     ]) {
-                        dir('root/Prod') {
+                        withEnv([
+                            "ARM_CLIENT_ID=$CLIENT_ID",
+                            "ARM_CLIENT_SECRET=$CLIENT_SECRET",
+                            "ARM_TENANT_ID=$TENANT_ID",
+                            "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
+                        ]) {
                             bat 'terraform.exe init'
                         }
                     }
@@ -69,19 +69,41 @@ pipeline {
 
         stage('Terraform Plan') {
             steps {
-                withCredentials([
-                    usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
-                    string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
-                    string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
-                ]) {
-                    withEnv([
-                        "ARM_CLIENT_ID=$CLIENT_ID",
-                        "ARM_CLIENT_SECRET=$CLIENT_SECRET",
-                        "ARM_TENANT_ID=$TENANT_ID",
-                        "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
+                dir('root/Prod') {
+                    withCredentials([
+                        usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
+                        string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
+                        string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
                     ]) {
-                        dir('root/Prod') {
+                        withEnv([
+                            "ARM_CLIENT_ID=$CLIENT_ID",
+                            "ARM_CLIENT_SECRET=$CLIENT_SECRET",
+                            "ARM_TENANT_ID=$TENANT_ID",
+                            "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
+                        ]) {
                             bat 'terraform.exe plan'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                dir('root/Prod') {
+                    input message: 'Apply Terraform changes?', ok: 'Apply'
+                    withCredentials([
+                        usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
+                        string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
+                        string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
+                    ]) {
+                        withEnv([
+                            "ARM_CLIENT_ID=$CLIENT_ID",
+                            "ARM_CLIENT_SECRET=$CLIENT_SECRET",
+                            "ARM_TENANT_ID=$TENANT_ID",
+                            "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
+                        ]) {
+                            bat 'terraform.exe apply -auto-approve'
                         }
                     }
                 }
