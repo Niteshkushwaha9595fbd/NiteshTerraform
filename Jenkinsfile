@@ -4,17 +4,19 @@ pipeline {
     environment {
         TF_VERSION = '1.6.0'
         TF_PLAN_FILE = 'tfplan.txt'
-        EMAIL_TO = 'niteshkushwaha9595fbd@gmail.com'  // 🔁 CHANGE THIS
+        TF_WORK_DIR = 'root/Prod'
+        EMAIL_TO = 'niteshkushwaha9595fbd@gmail.com'
     }
 
     stages {
-        stage('Checkout Code') {
+
+        stage('1. Checkout Code') {
             steps {
                 git branch: 'main', url: 'https://github.com/Niteshkushwaha9595fbd/NiteshTerraform.git'
             }
         }
 
-        stage('Install Terraform') {
+        stage('2. Install Terraform') {
             steps {
                 bat '''
                     IF NOT EXIST terraform.exe (
@@ -27,9 +29,9 @@ pipeline {
             }
         }
 
-        stage('Terraform Format Check') {
+        stage('3. Terraform Format Check') {
             steps {
-                dir('root/Prod') {
+                dir("${TF_WORK_DIR}") {
                     script {
                         def fmtStatus = bat(returnStatus: true, script: 'terraform.exe fmt -check -recursive')
                         if (fmtStatus != 0) {
@@ -40,57 +42,35 @@ pipeline {
             }
         }
 
-        stage('Terraform Init') {
+        stage('4. Terraform Init') {
             steps {
-                dir('root/Prod') {
-                    withCredentials([
-                        usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
-                        string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
-                        string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
-                    ]) {
-                        withEnv([
-                            "ARM_CLIENT_ID=$CLIENT_ID",
-                            "ARM_CLIENT_SECRET=$CLIENT_SECRET",
-                            "ARM_TENANT_ID=$TENANT_ID",
-                            "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
-                        ]) {
-                            bat 'terraform.exe init'
-                        }
+                dir("${TF_WORK_DIR}") {
+                    withTerraformCredentials {
+                        bat 'terraform.exe init'
                     }
                 }
             }
         }
 
-        stage('Terraform Validate') {
+        stage('5. Terraform Validate') {
             steps {
-                dir('root/Prod') {
+                dir("${TF_WORK_DIR}") {
                     bat 'terraform.exe validate'
                 }
             }
         }
 
-        stage('Terraform Plan') {
+        stage('6. Terraform Plan') {
             steps {
-                dir('root/Prod') {
-                    withCredentials([
-                        usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
-                        string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
-                        string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
-                    ]) {
-                        withEnv([
-                            "ARM_CLIENT_ID=$CLIENT_ID",
-                            "ARM_CLIENT_SECRET=$CLIENT_SECRET",
-                            "ARM_TENANT_ID=$TENANT_ID",
-                            "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
-                        ]) {
-                            bat "terraform.exe plan > ${env.TF_PLAN_FILE}"
-                        }
+                dir("${TF_WORK_DIR}") {
+                    withTerraformCredentials {
+                        bat "terraform.exe plan > ${TF_PLAN_FILE}"
                     }
                 }
             }
         }
 
-        stage('Manual Validation & Email') {
+        stage('7. Manual Approval & Email Notification') {
             steps {
                 script {
                     emailext(
@@ -104,32 +84,42 @@ pipeline {
                             DevOps Pipeline
                         """,
                         to: "${EMAIL_TO}",
-                        attachmentsPattern: "**/root/Prod/${TF_PLAN_FILE}"
+                        attachmentsPattern: "**/${TF_WORK_DIR}/${TF_PLAN_FILE}"
                     )
                 }
+
                 input message: 'Do you approve the Terraform changes?', ok: 'Approve'
             }
         }
 
-        stage('Terraform Apply') {
+        stage('8. Terraform Apply') {
             steps {
-                dir('root/Prod') {
-                    withCredentials([
-                        usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
-                        string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
-                        string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
-                    ]) {
-                        withEnv([
-                            "ARM_CLIENT_ID=$CLIENT_ID",
-                            "ARM_CLIENT_SECRET=$CLIENT_SECRET",
-                            "ARM_TENANT_ID=$TENANT_ID",
-                            "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
-                        ]) {
-                            bat 'terraform.exe apply -auto-approve'
-                        }
+                dir("${TF_WORK_DIR}") {
+                    withTerraformCredentials {
+                        bat 'terraform.exe apply -auto-approve'
                     }
                 }
             }
+        }
+    }
+}
+
+//
+// 💡 Helper block to reduce duplication of credential/env setup
+//
+def withTerraformCredentials(Closure body) {
+    withCredentials([
+        usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
+        string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
+        string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
+    ]) {
+        withEnv([
+            "ARM_CLIENT_ID=${env.CLIENT_ID}",
+            "ARM_CLIENT_SECRET=${env.CLIENT_SECRET}",
+            "ARM_TENANT_ID=${env.TENANT_ID}",
+            "ARM_SUBSCRIPTION_ID=${env.SUBSCRIPTION_ID}"
+        ]) {
+            body()
         }
     }
 }
