@@ -8,14 +8,12 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                // ✅ Code checkout from GitHub
                 git branch: 'main', url: 'https://github.com/Niteshkushwaha9595fbd/NiteshTerraform.git'
             }
         }
 
         stage('Install Terraform (if not installed)') {
             steps {
-                // ✅ Windows-specific installation of Terraform if not present
                 bat '''
                     IF NOT EXIST terraform.exe (
                         echo Terraform not found, downloading...
@@ -29,7 +27,6 @@ pipeline {
 
         stage('Terraform Format Check') {
             steps {
-                // ⚠️ Warn but don't fail build on formatting issues
                 script {
                     def fmtStatus = bat(returnStatus: true, script: 'terraform.exe fmt -check -recursive')
                     if (fmtStatus != 0) {
@@ -42,17 +39,15 @@ pipeline {
         stage('Terraform Init') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'azure-client-id', variable: 'CLIENT_ID'),
-                    string(credentialsId: 'azure-client-secret', variable: 'CLIENT_SECRET'),
-                    string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
-                    string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
+                    usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
+                    string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID')
                 ]) {
+                    // You can also hardcode subscription ID OR load from a file/param/env
                     withEnv([
-                        // ✅ FIXED: Use shell variable style ($VAR), NOT env.VAR
                         "ARM_CLIENT_ID=$CLIENT_ID",
                         "ARM_CLIENT_SECRET=$CLIENT_SECRET",
                         "ARM_TENANT_ID=$TENANT_ID",
-                        "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
+                        "ARM_SUBSCRIPTION_ID=<your-subscription-id-here>" // 🔁 Replace this
                     ]) {
                         bat 'terraform.exe init'
                     }
@@ -69,17 +64,14 @@ pipeline {
         stage('Terraform Plan') {
             steps {
                 withCredentials([
-                    string(credentialsId: 'azure-client-id', variable: 'CLIENT_ID'),
-                    string(credentialsId: 'azure-client-secret', variable: 'CLIENT_SECRET'),
-                    string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
-                    string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
+                    usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
+                    string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID')
                 ]) {
                     withEnv([
-                        // ✅ FIXED again here
                         "ARM_CLIENT_ID=$CLIENT_ID",
                         "ARM_CLIENT_SECRET=$CLIENT_SECRET",
                         "ARM_TENANT_ID=$TENANT_ID",
-                        "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
+                        "ARM_SUBSCRIPTION_ID=<your-subscription-id-here>" // 🔁 Replace this
                     ]) {
                         bat 'terraform.exe plan'
                     }
