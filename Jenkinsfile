@@ -27,10 +27,12 @@ pipeline {
 
         stage('Terraform Format Check') {
             steps {
-                script {
-                    def fmtStatus = bat(returnStatus: true, script: 'terraform.exe fmt -check -recursive')
-                    if (fmtStatus != 0) {
-                        echo '⚠️ Warning: Some Terraform files are not properly formatted. Please run `terraform fmt` locally.'
+                dir('root/Prod') {
+                    script {
+                        def fmtStatus = bat(returnStatus: true, script: 'terraform.exe fmt -check -recursive')
+                        if (fmtStatus != 0) {
+                            echo '⚠️ Warning: Some Terraform files are not properly formatted. Please run `terraform fmt` locally.'
+                        }
                     }
                 }
             }
@@ -40,16 +42,18 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
-                    string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID')
+                    string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
+                    string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
                 ]) {
-                    // You can also hardcode subscription ID OR load from a file/param/env
                     withEnv([
                         "ARM_CLIENT_ID=$CLIENT_ID",
                         "ARM_CLIENT_SECRET=$CLIENT_SECRET",
                         "ARM_TENANT_ID=$TENANT_ID",
-                        "ARM_SUBSCRIPTION_ID=<your-subscription-id-here>" // 🔁 Replace this
+                        "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
                     ]) {
-                        bat 'terraform.exe init'
+                        dir('root/Prod') {
+                            bat 'terraform.exe init'
+                        }
                     }
                 }
             }
@@ -57,7 +61,9 @@ pipeline {
 
         stage('Terraform Validate') {
             steps {
-                bat 'terraform.exe validate'
+                dir('root/Prod') {
+                    bat 'terraform.exe validate'
+                }
             }
         }
 
@@ -65,15 +71,18 @@ pipeline {
             steps {
                 withCredentials([
                     usernamePassword(credentialsId: 'azure-spn-credentials', usernameVariable: 'CLIENT_ID', passwordVariable: 'CLIENT_SECRET'),
-                    string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID')
+                    string(credentialsId: 'azure-tenant-id', variable: 'TENANT_ID'),
+                    string(credentialsId: 'azure-subscription-id', variable: 'SUBSCRIPTION_ID')
                 ]) {
                     withEnv([
                         "ARM_CLIENT_ID=$CLIENT_ID",
                         "ARM_CLIENT_SECRET=$CLIENT_SECRET",
                         "ARM_TENANT_ID=$TENANT_ID",
-                        "ARM_SUBSCRIPTION_ID=<your-subscription-id-here>" // 🔁 Replace this
+                        "ARM_SUBSCRIPTION_ID=$SUBSCRIPTION_ID"
                     ]) {
-                        bat 'terraform.exe plan'
+                        dir('root/Prod') {
+                            bat 'terraform.exe plan'
+                        }
                     }
                 }
             }
