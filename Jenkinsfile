@@ -73,22 +73,39 @@ pipeline {
         stage('7. Manual Approval & Email Notification') {
             steps {
                 script {
-                    emailext(
-                        subject: "Terraform Plan Approval Needed",
-                        body: """
-                            Hello,
+                    def planFilePath = "${env.WORKSPACE}/${TF_WORK_DIR}/${TF_PLAN_FILE}"
 
-                            Please review the attached Terraform plan for approval.
+                    if (fileExists(planFilePath)) {
+                        emailext(
+                            subject: "Terraform Plan Approval Needed - ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                            body: """
+Hello,
 
-                            Regards,
-                            DevOps Pipeline
-                        """,
-                        to: "${EMAIL_TO}",
-                        attachmentsPattern: "**/${TF_WORK_DIR}/${TF_PLAN_FILE}"
-                    )
+A new Terraform plan has been generated and is ready for your review.
+
+▶ *Job*: ${env.JOB_NAME}  
+▶ *Build Number*: ${env.BUILD_NUMBER}  
+▶ *Environment*: Production  
+▶ *Workspace*: ${env.WORKSPACE}
+
+Please find the attached Terraform plan file.
+
+Kindly review and provide approval via the Jenkins prompt.
+
+Regards,  
+Jenkins Pipeline
+                            """,
+                            mimeType: 'text/plain',
+                            to: "${EMAIL_TO}",
+                            attachmentsPattern: "${TF_WORK_DIR}/${TF_PLAN_FILE}",
+                            replyTo: 'no-reply@example.com'
+                        )
+                    } else {
+                        error("Terraform plan file not found at ${planFilePath}")
+                    }
                 }
 
-                input message: 'Do you approve the Terraform changes?', ok: 'Approve'
+                input message: '🛑 Do you approve the Terraform changes?', ok: '✅ Approve'
             }
         }
 
@@ -105,7 +122,7 @@ pipeline {
 }
 
 //
-// 💡 Helper block to reduce duplication of credential/env setup
+// 🔐 Helper: Inject Azure credentials into environment
 //
 def withTerraformCredentials(Closure body) {
     withCredentials([
