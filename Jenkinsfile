@@ -1,3 +1,4 @@
+@Library('my-shared-lib') _
 pipeline {
     agent { label 'nitesh23' }
 
@@ -46,7 +47,7 @@ pipeline {
             steps {
                 dir("${TF_WORK_DIR}") {
                     withTerraformCredentials {
-                        bat 'terraform.exe init'
+                        terraforminit
                     }
                 }
             }
