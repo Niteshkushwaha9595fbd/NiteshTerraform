@@ -47,7 +47,7 @@ pipeline {
             steps {
                 dir("${TF_WORK_DIR}") {
                     withTerraformCredentials {
-                        terraforminit
+                        terraforminit()
                     }
                 }
             }
