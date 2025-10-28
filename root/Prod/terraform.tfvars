@@ -1,7 +1,7 @@
 rgs = {
   rg1 = {
     rg_name     = "Aks-rg"
-    rg_location = "centralindia"
+    rg_location = "east us"
   }
   
 }
