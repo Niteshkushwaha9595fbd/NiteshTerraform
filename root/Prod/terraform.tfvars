@@ -1,6 +1,6 @@
 rgs = {
   rg1 = {
-    rg_name     = "AKS-rg"
+    rg_name     = "Aks-rg"
     rg_location = "centralindia"
   }
   
