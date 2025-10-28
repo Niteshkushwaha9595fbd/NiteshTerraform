@@ -6,4 +6,9 @@ rgs = {
   
 }
 
-
+Aks = {
+  aks-prod = {
+    aks_name   = "aks-prod"
+    dns_prefix = "aksprod"
+  }
+}
