@@ -7,5 +7,6 @@ module "rgs" {
 module "aks" {
     source = "../../child/AKS"
     Aks = var.Aks
+    depends_on = [ module.rgs ]
   
 }
