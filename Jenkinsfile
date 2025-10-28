@@ -119,6 +119,31 @@ Jenkins Pipeline
                 }
             }
         }
+
+        // ✅ New Cleanup Stage
+        stage('9. Cleanup Workspace') {
+            steps {
+                dir("${TF_WORK_DIR}") {
+                    echo "🧹 Cleaning up Terraform working directory..."
+                    bat 'rmdir /s /q .terraform'
+                    bat 'del /f /q tfplan.txt'
+                    bat 'del /f /q terraform.zip'
+                }
+                echo "✅ Cleanup completed."
+            }
+        }
+    }
+
+    // Optional: Always clean workspace regardless of pipeline result
+    post {
+        always {
+            dir("${TF_WORK_DIR}") {
+                echo "🧹 Post-cleanup: Ensuring Terraform artifacts are removed..."
+                bat 'rmdir /s /q .terraform'
+                bat 'del /f /q tfplan.txt'
+                bat 'del /f /q terraform.zip'
+            }
+        }
     }
 }
 
