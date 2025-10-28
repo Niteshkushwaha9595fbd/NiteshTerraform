@@ -6,8 +6,8 @@ data "azurerm_resource_group" "Data1" {
 resource "azurerm_kubernetes_cluster" "example" {
     for_each = var.Aks
   name                = each.value.aks_name
-  location            = Data.azurerm_resource_group.location
-  resource_group_name = Data.azurerm_resource_group.name
+  location            = data.azurerm_resource_group.location
+  resource_group_name = data.azurerm_resource_group.name
   dns_prefix          = each.value.dns_prefix
 
   default_node_pool {
