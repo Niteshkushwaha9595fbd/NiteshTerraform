@@ -115,7 +115,6 @@ Jenkins Pipeline
                 dir("${TF_WORK_DIR}") {
                     withTerraformCredentials {
                         bat 'az provider register --namespace Microsoft.ContainerService'
-                        bat 'az provider show --namespace Microsoft.ContainerService --query "registrationState"
                         bat 'terraform.exe apply -auto-approve'
                     }
                 }
