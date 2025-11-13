@@ -20,17 +20,14 @@ pipeline {
             fi
 
             # download terraform if not present
-            if ! command -v terraform &> /dev/null; then
-                echo "Terraform not found, downloading..."
-                curl -o terraform.zip https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip
-                unzip -o terraform.zip
-                chmod +x terraform
-                echo "export PATH=$PATH:$(pwd)" >> ~/.bashrc
-                export PATH=$PATH:$(pwd)
-            fi
-
+            echo "Downloading Terraform..."
+            curl -o terraform.zip https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip
+            apt-get update && apt-get install -y unzip || true  # optional if unzip missing
+            unzip -o terraform.zip
+            chmod +x terraform
+            export PATH=$PWD:$PATH
             terraform version
-        '''
+            '''
             }
         }
 
