@@ -22,7 +22,7 @@ pipeline {
             # download terraform if not present
             if ! command -v terraform &> /dev/null; then
                 echo "Terraform not found, downloading..."
-                curl -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
+                curl -o terraform.zip https://releases.hashicorp.com/terraform/1.9.8/terraform_1.9.8_linux_amd64.zip
                 unzip -o terraform.zip
                 chmod +x terraform
                 echo "export PATH=$PATH:$(pwd)" >> ~/.bashrc
