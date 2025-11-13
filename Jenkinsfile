@@ -1,4 +1,5 @@
-@Library('my-shared-lib') _
+@Library('jenkins-shared-library
+') _
 pipeline {
     agent { label 'k8s-agent' }
 
