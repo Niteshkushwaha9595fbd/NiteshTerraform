@@ -1,6 +1,6 @@
 @Library('my-shared-lib') _
 pipeline {
-    agent { label 'k8s agent' }
+    agent { label 'k8s-agent' }
 
     environment {
         TF_VERSION = '1.6.0'
