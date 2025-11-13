@@ -13,15 +13,22 @@ pipeline {
         stage('2. Install Terraform') {
             steps {
                 sh '''
-                    if ! command -v terraform &> /dev/null
-                    then
-                        echo "Terraform not found, downloading..."
-                        curl -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
-                        unzip -o terraform.zip
-                        mv terraform /usr/local/bin/
-                    fi
-                    terraform -version
-                '''
+                   # ensure unzip is installed
+            if ! command -v unzip &> /dev/null; then
+                echo "📦 Installing unzip..."
+                apt-get update -y && apt-get install -y unzip
+            fi
+
+            if ! command -v terraform &> /dev/null; then
+                echo "Terraform not found, downloading..."
+                curl -o terraform.zip https://releases.hashicorp.com/terraform/${TF_VERSION}/terraform_${TF_VERSION}_linux_amd64.zip
+                unzip -o terraform.zip
+                chmod +x terraform
+                mv terraform /usr/local/bin/
+            fi
+
+            terraform version
+        '''
             }
         }
 
