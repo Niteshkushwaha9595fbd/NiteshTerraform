@@ -1,10 +1,10 @@
-variable "vnet_name" {
+variable "name" {
   description = "Name of the Virtual Network"
   type        = string
 }
 
 variable "location" {
-  description = "Azure region where VNet will be created"
+  description = "Azure region"
   type        = string
 }
 
@@ -14,12 +14,12 @@ variable "resource_group_name" {
 }
 
 variable "address_space" {
-  description = "Address space for the VNet (list of CIDR blocks)"
+  description = "Address space for the VNet"
   type        = list(string)
 }
 
 variable "tags" {
-  description = "Tags to apply to the VNet"
+  description = "Tags to apply"
   type        = map(string)
   default     = {}
 }

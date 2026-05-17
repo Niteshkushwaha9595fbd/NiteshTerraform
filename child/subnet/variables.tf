@@ -1,4 +1,4 @@
-variable "subnet_name" {
+variable "name" {
   description = "Name of the Subnet"
   type        = string
 }
@@ -8,12 +8,12 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "vnet_name" {
-  description = "Name of the VNet this subnet belongs to"
+variable "virtual_network_name" {
+  description = "Name of the Virtual Network"
   type        = string
 }
 
 variable "address_prefixes" {
-  description = "Address prefixes for the subnet (CIDR)"
+  description = "Address prefixes for the Subnet"
   type        = list(string)
 }

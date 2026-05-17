@@ -1,9 +1,9 @@
-output "subnet_id" {
-  description = "ID of the created Subnet"
-  value       = azurerm_subnet.subnet.id
+output "name" {
+  description = "Name of the Subnet"
+  value       = azurerm_subnet.this.name
 }
 
-output "subnet_name" {
-  description = "Name of the created Subnet"
-  value       = azurerm_subnet.subnet.name
+output "id" {
+  description = "ID of the Subnet"
+  value       = azurerm_subnet.this.id
 }
