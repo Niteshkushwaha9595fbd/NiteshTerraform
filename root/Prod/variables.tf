@@ -48,10 +48,14 @@ variable "kubernetes_version" {
   default     = "1.29.0"
 }
 
-variable "node_count" {
-  description = "Number of nodes"
-  type        = number
-  default     = 1
+variable "tenant_id" {
+  description = "Azure AD tenant ID for RBAC integration"
+  type        = string
+}
+
+variable "log_analytics_workspace_id" {
+  description = "Log Analytics Workspace ID for OMS agent and Defender"
+  type        = string
 }
 
 variable "vm_size" {

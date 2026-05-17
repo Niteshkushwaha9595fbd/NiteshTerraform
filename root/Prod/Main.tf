@@ -17,17 +17,18 @@ module "subnet" {
 }
 
 module "aks" {
-  source              = "../../child/aks"
-  aks_name            = var.aks_name
-  location            = var.location
-  resource_group_name = var.resource_group_name
-  dns_prefix          = var.dns_prefix
-  kubernetes_version  = var.kubernetes_version
-  node_count          = var.node_count
-  vm_size             = var.vm_size
-  subnet_id           = module.subnet.subnet_id
-  network_plugin      = var.network_plugin
-  load_balancer_sku   = var.load_balancer_sku
-  tags                = var.tags
-  depends_on          = [module.subnet]
+  source                     = "../../child/aks"
+  aks_name                   = var.aks_name
+  location                   = var.location
+  resource_group_name        = var.resource_group_name
+  dns_prefix                 = var.dns_prefix
+  kubernetes_version         = var.kubernetes_version
+  vm_size                    = var.vm_size
+  subnet_id                  = module.subnet.subnet_id
+  network_plugin             = var.network_plugin
+  load_balancer_sku          = var.load_balancer_sku
+  tenant_id                  = var.tenant_id
+  log_analytics_workspace_id = var.log_analytics_workspace_id
+  tags                       = var.tags
+  depends_on                 = [module.subnet]
 }
