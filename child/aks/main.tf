@@ -50,3 +50,12 @@ resource "azurerm_kubernetes_cluster" "this" {
     ]
   }
 }
+
+# ── RBAC Role Assignments ─────────────────────────────────────────────────────
+
+resource "azurerm_role_assignment" "aks_rbac_cluster_admin" {
+  for_each             = toset(var.admin_group_object_ids)
+  scope                = azurerm_kubernetes_cluster.this.id
+  role_definition_name = "Azure Kubernetes Service RBAC Cluster Admin"
+  principal_id         = each.value
+}
