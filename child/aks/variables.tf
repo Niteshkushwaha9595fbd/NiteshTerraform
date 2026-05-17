@@ -92,6 +92,18 @@ variable "load_balancer_sku" {
   default     = "standard"
 }
 
+variable "service_cidr" {
+  description = "CIDR for Kubernetes services (must not overlap with VNet/Subnet)"
+  type        = string
+  default     = "172.16.0.0/16"
+}
+
+variable "dns_service_ip" {
+  description = "DNS service IP (must be within service_cidr)"
+  type        = string
+  default     = "172.16.0.10"
+}
+
 # ── Tags ──────────────────────────────────────────────────────────────────────
 
 variable "tags" {

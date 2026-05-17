@@ -28,6 +28,8 @@ resource "azurerm_kubernetes_cluster" "this" {
     network_plugin    = var.network_plugin
     network_policy    = var.network_policy
     load_balancer_sku = var.load_balancer_sku
+    service_cidr      = var.service_cidr
+    dns_service_ip    = var.dns_service_ip
   }
 
   dynamic "azure_active_directory_role_based_access_control" {

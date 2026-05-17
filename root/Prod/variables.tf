@@ -29,6 +29,8 @@ variable "clusters" {
       network_plugin         = string
       network_policy         = string
       load_balancer_sku      = string
+      service_cidr           = string
+      dns_service_ip         = string
     })
   }))
 }

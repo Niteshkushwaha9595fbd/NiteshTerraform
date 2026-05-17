@@ -64,6 +64,8 @@ module "aks" {
   network_plugin    = each.value.aks.network_plugin
   network_policy    = each.value.aks.network_policy
   load_balancer_sku = each.value.aks.load_balancer_sku
+  service_cidr      = each.value.aks.service_cidr
+  dns_service_ip    = each.value.aks.dns_service_ip
 
   tags = each.value.tags
 
