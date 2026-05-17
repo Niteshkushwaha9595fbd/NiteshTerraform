@@ -70,15 +70,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
   # Azure Monitor
   monitor_metrics {}
 
-  oms_agent {
-    log_analytics_workspace_id      = var.log_analytics_workspace_id
-    msi_auth_for_monitoring_enabled = true
-  }
 
-  # Microsoft Defender
-  microsoft_defender {
-    log_analytics_workspace_id = var.log_analytics_workspace_id
-  }
 
   # Key Vault CSI driver
   key_vault_secrets_provider {

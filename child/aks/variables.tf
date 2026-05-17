@@ -151,12 +151,7 @@ variable "authorized_ip_ranges" {
   default     = []
 }
 
-# ── Observability ─────────────────────────────────────────────────────────────
 
-variable "log_analytics_workspace_id" {
-  description = "Log Analytics Workspace ID for OMS agent and Defender"
-  type        = string
-}
 
 # ── Security ──────────────────────────────────────────────────────────────────
 
