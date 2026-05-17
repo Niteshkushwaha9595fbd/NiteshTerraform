@@ -2,6 +2,7 @@ clusters = {
   prod = {
     location            = "East US"
     resource_group_name = "my-prod-rg"
+    tenant_id           = "REPLACE_WITH_YOUR_AZURE_TENANT_ID"
     kubernetes_version  = "1.29.0"
     dns_prefix          = "myprodaks"
     tags = {

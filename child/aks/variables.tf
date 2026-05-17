@@ -23,6 +23,11 @@ variable "kubernetes_version" {
   type        = string
 }
 
+variable "tenant_id" {
+  description = "Azure AD tenant ID for RBAC"
+  type        = string
+}
+
 # ── Node Pool ─────────────────────────────────────────────────────────────────
 
 variable "default_node_pool_name" {
