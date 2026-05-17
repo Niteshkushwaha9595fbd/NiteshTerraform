@@ -32,15 +32,6 @@ resource "azurerm_kubernetes_cluster" "this" {
     dns_service_ip    = var.dns_service_ip
   }
 
-  dynamic "azure_active_directory_role_based_access_control" {
-    for_each = [1]
-    content {
-      azure_rbac_enabled        = true
-      tenant_id                 = data.azurerm_client_config.current.tenant_id
-      admin_group_object_ids    = var.admin_group_object_ids
-    }
-  }
-
   tags = var.tags
 
   lifecycle {
