@@ -1,12 +1,11 @@
 variable "clusters" {
   description = "Nested map defining all AKS clusters with their networking and node pool config"
   type = map(object({
-    location           = string
+    location            = string
     resource_group_name = string
-    tenant_id          = string
-    kubernetes_version = string
-    dns_prefix         = string
-    tags               = map(string)
+    kubernetes_version  = string
+    dns_prefix          = string
+    tags                = map(string)
 
     vnet = object({
       name          = string
