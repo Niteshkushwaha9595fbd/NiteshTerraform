@@ -49,7 +49,6 @@ module "aks" {
   resource_group_name    = module.rg[each.key].name
   dns_prefix             = each.value.dns_prefix
   kubernetes_version     = each.value.kubernetes_version
-  tenant_id              = each.value.tenant_id
 
   # Node Pool
   default_node_pool_name = each.value.aks.default_node_pool_name

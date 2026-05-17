@@ -3,7 +3,6 @@ variable "clusters" {
   type = map(object({
     location            = string
     resource_group_name = string
-    tenant_id           = string
     kubernetes_version  = string
     dns_prefix          = string
     tags                = map(string)

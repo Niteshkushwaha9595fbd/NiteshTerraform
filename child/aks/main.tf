@@ -1,3 +1,5 @@
+data "azurerm_client_config" "current" {}
+
 resource "azurerm_kubernetes_cluster" "this" {
   name                = var.name
   location            = var.location
@@ -28,9 +30,12 @@ resource "azurerm_kubernetes_cluster" "this" {
     load_balancer_sku = var.load_balancer_sku
   }
 
-  azure_active_directory_role_based_access_control {
-    azure_rbac_enabled = true
-    tenant_id          = var.tenant_id
+  dynamic "azure_active_directory_role_based_access_control" {
+    for_each = [1]
+    content {
+      azure_rbac_enabled = true
+      tenant_id          = data.azurerm_client_config.current.tenant_id
+    }
   }
 
   tags = var.tags
