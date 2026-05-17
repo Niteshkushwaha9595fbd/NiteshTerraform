@@ -33,6 +33,7 @@ clusters = {
       load_balancer_sku      = "standard"
       service_cidr           = "172.16.0.0/16"
       dns_service_ip         = "172.16.0.10"
+      admin_group_object_ids = ["66344535-a238-4311-aae2-10bd0d5f6e8d"]
     }
   }
 }

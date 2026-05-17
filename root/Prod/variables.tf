@@ -31,6 +31,7 @@ variable "clusters" {
       load_balancer_sku      = string
       service_cidr           = string
       dns_service_ip         = string
+      admin_group_object_ids = list(string)
     })
   }))
 }

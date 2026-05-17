@@ -104,6 +104,12 @@ variable "dns_service_ip" {
   default     = "172.16.0.10"
 }
 
+variable "admin_group_object_ids" {
+  description = "List of Azure AD group object IDs for AKS admin access"
+  type        = list(string)
+  default     = []
+}
+
 # ── Tags ──────────────────────────────────────────────────────────────────────
 
 variable "tags" {

@@ -66,6 +66,7 @@ module "aks" {
   load_balancer_sku = each.value.aks.load_balancer_sku
   service_cidr      = each.value.aks.service_cidr
   dns_service_ip    = each.value.aks.dns_service_ip
+  admin_group_object_ids = each.value.aks.admin_group_object_ids
 
   tags = each.value.tags
 
